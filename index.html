@@ -105,7 +105,6 @@
         .flashcard-container {
             perspective: 1000px;
             cursor: pointer;
-            min-height: 150px;
         }
         .flashcard {
             position: relative;
@@ -143,11 +142,13 @@
             font-weight: 600;
             font-size: 1.2rem;
             color: var(--heading-color);
+            text-align: center;
         }
         .flashcard-definition {
             font-size: 1rem;
             color: var(--text-color);
             text-align: left;
+            width: 100%;
         }
     </style>
 </head>
@@ -217,7 +218,7 @@
                                         <span class="text-sm text-slate-500 mt-2">(Clique para ver a definição)</span>
                                     </div>
                                     <div class="flashcard-back">
-                                        <p class="flashcard-definition"><strong>[DEFINIÇÃO] Crescente Fértil:</strong> Uma vasta região em forma de arco que se estende desde o Golfo Pérsico, subindo pelos vales dos rios Tigre e Eufrates (Mesopotâmia), descendo pela costa do Mediterrâneo (Síria-Palestina) e terminando no vale do rio Nilo (Egito). Foi o berço das primeiras grandes civilizações e o palco principal da narrativa do AT.</p>
+                                        <p class="flashcard-definition">Uma vasta região em forma de arco que se estende desde o Golfo Pérsico, subindo pelos vales dos rios Tigre e Eufrates (Mesopotâmia), descendo pela costa do Mediterrâneo (Síria-Palestina) e terminando no vale do rio Nilo (Egito). Foi o berço das primeiras grandes civilizações e o palco principal da narrativa do AT.</p>
                                     </div>
                                 </div>
                             </div>
@@ -239,7 +240,7 @@
                                          <span class="text-sm text-slate-500 mt-2">(Clique para ver a definição)</span>
                                     </div>
                                     <div class="flashcard-back">
-                                        <p class="flashcard-definition"><strong>[DEFINIÇÃO]</strong> A teologia reformada sustenta que a inspiração se estende a cada <strong>palavra</strong> (verbal) do texto original e a <strong>todas as partes</strong> (plenária) da Escritura igualmente, sem anular a autoria humana e seus estilos distintos. A Bíblia é, simultaneamente, 100% Palavra de Deus e 100% palavra humana.</p>
+                                        <p class="flashcard-definition">A teologia reformada sustenta que a inspiração se estende a cada <strong>palavra</strong> (verbal) do texto original e a <strong>todas as partes</strong> (plenária) da Escritura igualmente, sem anular a autoria humana e seus estilos distintos. A Bíblia é, simultaneamente, 100% Palavra de Deus e 100% palavra humana.</p>
                                     </div>
                                 </div>
                             </div>
@@ -274,7 +275,7 @@
                                         <span class="text-sm text-slate-500 mt-2">(Clique para ver a definição)</span>
                                     </div>
                                     <div class="flashcard-back">
-                                        <p class="flashcard-definition"><strong>[DEFINIÇÃO]</strong> Teoria da Alta Crítica, popularizada por Julius Wellhausen, que propõe que o Pentateuco é uma compilação de quatro fontes distintas (Javista, Eloísta, Deuteronomista, Sacerdotal). A teologia reformada rejeita seus pressupostos naturalistas e conclusões, que minam a autoria mosaica e a unidade do texto.</p>
+                                        <p class="flashcard-definition">Teoria da Alta Crítica, popularizada por Julius Wellhausen, que propõe que o Pentateuco é uma compilação de quatro fontes distintas (Javista, Eloísta, Deuteronomista, Sacerdotal). A teologia reformada rejeita seus pressupostos naturalistas e conclusões, que minam a autoria mosaica e a unidade do texto.</p>
                                     </div>
                                 </div>
                             </div>
@@ -285,7 +286,7 @@
                                         <span class="text-sm text-slate-500 mt-2">(Clique para ver a definição)</span>
                                     </div>
                                     <div class="flashcard-back">
-                                        <p class="flashcard-definition"><strong>[DEFINIÇÃO]</strong> É a ciência que compara os milhares de manuscritos bíblicos para reconstruir o texto original com a maior certeza possível. Longe de minar a fé, ela fortalece a confiança na transmissão fiel das Escrituras, pois demonstra que nenhuma doutrina central é afetada por variantes textuais.</p>
+                                        <p class="flashcard-definition">É a ciência que compara os milhares de manuscritos bíblicos para reconstruir o texto original com a maior certeza possível. Longe de minar a fé, ela fortalece a confiança na transmissão fiel das Escrituras, pois demonstra que nenhuma doutrina central é afetada por variantes textuais.</p>
                                     </div>
                                 </div>
                             </div>
@@ -768,13 +769,31 @@
             const sections = document.querySelectorAll('.content-section');
             const collapsibles = document.querySelectorAll('.collapsible-header');
 
+            function setFlashcardHeights(sectionElement) {
+                sectionElement.querySelectorAll('.flashcard-container').forEach(container => {
+                    if (container.style.height && container.style.height !== '0px') return;
+
+                    const front = container.querySelector('.flashcard-front');
+                    const back = container.querySelector('.flashcard-back');
+                    const frontHeight = front.scrollHeight;
+                    const backHeight = back.scrollHeight;
+                    const maxHeight = Math.max(frontHeight, backHeight);
+                    container.style.height = `${maxHeight}px`;
+                });
+            }
+
             function showSection(hash) {
                 if (!hash || hash === '#') {
                     hash = '#unit-1';
                 }
 
                 sections.forEach(section => {
-                    section.style.display = ('#' + section.id === hash) ? 'block' : 'none';
+                    if ('#' + section.id === hash) {
+                        section.style.display = 'block';
+                        setFlashcardHeights(section); 
+                    } else {
+                        section.style.display = 'none';
+                    }
                 });
 
                 links.forEach(link => {
@@ -810,6 +829,13 @@
                     } else {
                         content.style.maxHeight = content.scrollHeight + "px";
                     }
+                });
+            });
+
+            // Add click listener for flashcards
+            document.querySelectorAll('.flashcard-container').forEach(container => {
+                container.addEventListener('click', function() {
+                    this.querySelector('.flashcard').classList.toggle('flipped');
                 });
             });
 
