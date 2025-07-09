@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introdução Interativa ao Antigo Testamento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0891b2;
+            --secondary-color: #0e7490;
+            --background-color: #f0f9ff;
+            --text-color: #334155;
+            --heading-color: #1e293b;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        .prose-text {
+            font-family: 'Lora', serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .sidebar {
+            background-color: #0f172a;
+        }
+        .sidebar-link.active {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+        .sidebar-link.active i {
+            color: white;
+        }
+        .sidebar-link i {
+            color: #94a3b8;
+            transition: color 0.2s;
+        }
+        .sidebar-link:hover i {
+            color: white;
+        }
+        .main-content h2 {
+            font-family: 'Inter', sans-serif;
+            color: var(--heading-color);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        .main-content h3 {
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+        .collapsible-header {
+            transition: background-color 0.2s ease-in-out;
+            border: 1px solid #e2e8f0;
+        }
+        .collapsible-header::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            transition: transform 0.3s ease;
+        }
+        .collapsible-header.open::after {
+            transform: rotate(180deg);
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s ease-in-out;
+        }
+        .highlight {
+            background-color: #e0f2fe;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        .info-box {
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            border-left-width: 4px;
+        }
+        .definition-box {
+            background-color: #f0f9ff;
+            border-color: #38bdf8;
+        }
+        .christology-box {
+            background-color: #fffbeb;
+            border-color: #f59e0b;
+        }
+        .christology-box h4 {
+            color: #b45309;
+        }
+        .key-point-box {
+            background-color: #f0fdf4;
+            border-color: #4ade80;
+        }
+        .flashcard-container {
+            perspective: 1000px;
+            cursor: pointer;
+            min-height: 150px;
+        }
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+        }
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .flashcard-front {
+            background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
+            border: 1px solid #e0f2fe;
+        }
+        .flashcard-back {
+            background: linear-gradient(135deg, #f0f9ff 0%, #cce7ff 100%);
+            border: 1px solid #bae6fd;
+            transform: rotateY(180deg);
+        }
+        .flashcard-term {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--heading-color);
+        }
+        .flashcard-definition {
+            font-size: 1rem;
+            color: var(--text-color);
+            text-align: left;
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <div class="flex flex-col lg:flex-row min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar w-full lg:w-80 p-6 lg:p-8 shrink-0">
+            <header class="mb-8">
+                <h1 class="text-2xl font-bold text-white">Introdução ao AT</h1>
+                <p class="text-sm text-slate-400">Uma Perspectiva Histórico-Redentiva</p>
+            </header>
+            <nav id="nav-menu" class="space-y-1 text-slate-300">
+                <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2">Parte I: Fundamentos</h2>
+                <a href="#unit-1" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-book-open w-6 text-center mr-3"></i>1. Introdução</a>
+                <a href="#unit-2" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-feather-pointed w-6 text-center mr-3"></i>2. Inspiração</a>
+                <a href="#unit-3" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-magnifying-glass w-6 text-center mr-3"></i>3. Estudos Críticos</a>
+                <a href="#unit-4" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-scroll w-6 text-center mr-3"></i>4. Cânon e Textos</a>
+                
+                <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2">Parte II: Análise dos Livros</h2>
+                <a href="#unit-5" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-book-bible w-6 text-center mr-3"></i>5. Pentateuco 1</a>
+                <a href="#unit-6" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-book-bible w-6 text-center mr-3"></i>6. Pentateuco 2</a>
+                <a href="#unit-7" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-landmark w-6 text-center mr-3"></i>7. Históricos 1</a>
+                <a href="#unit-8" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-crown w-6 text-center mr-3"></i>8. Históricos 2</a>
+                <a href="#unit-9" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-gavel w-6 text-center mr-3"></i>9. Históricos 3</a>
+                <a href="#unit-10" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-feather w-6 text-center mr-3"></i>10. Poéticos 1</a>
+                <a href="#unit-11" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-music w-6 text-center mr-3"></i>11. Poéticos 2</a>
+                <a href="#unit-12" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-bullhorn w-6 text-center mr-3"></i>12. Proféticos 1</a>
+                <a href="#unit-13" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-bullhorn w-6 text-center mr-3"></i>13. Proféticos 2</a>
+                <a href="#unit-14" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-users w-6 text-center mr-3"></i>14. Os Doze Profetas</a>
+                
+                <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2">Conclusão</h2>
+                <a href="#unit-15" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-flag-checkered w-6 text-center mr-3"></i>15. Conclusão Geral</a>
+                <a href="#unit-16" class="sidebar-link flex items-center p-3 rounded-md hover:bg-slate-700/50 transition-colors duration-200"><i class="fa-solid fa-book-bookmark w-6 text-center mr-3"></i>16. Bibliografia</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content flex-1 p-6 md:p-10 lg:p-16">
+            
+            <div id="content-container" class="max-w-4xl mx-auto">
+                <!-- Unit 1 -->
+                <section id="unit-1" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">1. Introdução ao Estudo do Antigo Testamento</h2>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <h3 class="text-2xl mb-4">📜 Por que Estudar o Antigo Testamento</h3>
+                        <div class="prose-text">
+                            <p>A jornada para a compreensão da fé cristã inicia-se, inevitavelmente, nas páginas do Antigo Testamento. Longe de ser um mero prelúdio obsoleto ao Novo Testamento, ele constitui o próprio alicerce sobre o qual a revelação de Deus em Cristo é edificada. Ignorá-lo seria como tentar apreciar um grandioso edifício observando apenas seus andares superiores, sem compreender a fundação que lhe confere estabilidade e significado.</p>
+                            <div class="key-point-box info-box">
+                                <h4 class="font-bold text-lg mb-2 text-green-800">Razões Fundamentais:</h4>
+                                <ul class="list-disc list-inside space-y-2">
+                                    <li><strong>Razão Teológica:</strong> É a Palavra de Deus, constituindo três quartos do cânon bíblico. É o fundamento indispensável para a compreensão do Novo, revelando a história da redenção de forma progressiva através das alianças. O próprio Jesus e os apóstolos o consideravam sua Escritura autoritativa.</li>
+                                    <li><strong>Razão Histórica:</strong> É um documento de valor inestimável para a compreensão da história, cultura e religião do Antigo Oriente Próximo. A arqueologia bíblica tem consistentemente fornecido corroborações impressionantes da sua historicidade.</li>
+                                    <li><strong>Razão Devocional:</strong> É "proveitoso para ensinar, para redarguir, para corrigir, para instruir em justiça" (2 Timóteo 3:16-17). As narrativas e os Salmos enriquecem nossa vida de oração e adoração, ensinando-nos sobre a complexa jornada do ser humano com Deus.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <h3 class="text-2xl mb-4">🗺️ O Cenário do Antigo Testamento</h3>
+                        <div class="prose-text">
+                            <p>A história da redenção não se desenrolou em um vácuo, mas em um palco geográfico e histórico específico, divinamente preparado.</p>
+                             <div class="flashcard-container mt-6" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
+                                <div class="flashcard">
+                                    <div class="flashcard-front">
+                                        <span class="flashcard-term">Crescente Fértil</span>
+                                        <span class="text-sm text-slate-500 mt-2">(Clique para ver a definição)</span>
+                                    </div>
+                                    <div class="flashcard-back">
+                                        <p class="flashcard-definition"><strong>[DEFINIÇÃO] Crescente Fértil:</strong> Uma vasta região em forma de arco que se estende desde o Golfo Pérsico, subindo pelos vales dos rios Tigre e Eufrates (Mesopotâmia), descendo pela costa do Mediterrâneo (Síria-Palestina) e terminando no vale do rio Nilo (Egito). Foi o berço das primeiras grandes civilizações e o palco principal da narrativa do AT.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Unit 2 -->
+                <section id="unit-2" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">2. A Inspiração Divina do Antigo Testamento</h2>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <h3 class="text-2xl mb-4">🕊️ A Doutrina da Inspiração (*Theopneustos*)</h3>
+                        <div class="prose-text">
+                            <p>O texto clássico é 2 Timóteo 3:16: "Toda a Escritura é inspirada por Deus...". A palavra grega <span class="highlight">θεόπνευστος (*theopneustos*)</span> significa, literalmente, "soprada por Deus". Esta imagem evoca o poder criativo do fôlego de Deus, como em Gênesis 2:7, quando Ele soprou o fôlego de vida no homem. Assim, a Escritura não é o produto do gênio humano, mas o resultado direto da atividade criadora e reveladora de Deus.</p>
+                             <div class="flashcard-container mt-6" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
+                                <div class="flashcard">
+                                    <div class="flashcard-front">
+                                        <span class="flashcard-term">Inspiração Verbal e Plenária</span>
+                                         <span class="text-sm text-slate-500 mt-2">(Clique para ver a definição)</span>
+                                    </div>
+                                    <div class="flashcard-back">
+                                        <p class="flashcard-definition"><strong>[DEFINIÇÃO]</strong> A teologia reformada sustenta que a inspiração se estende a cada <strong>palavra</strong> (verbal) do texto original e a <strong>todas as partes</strong> (plenária) da Escritura igualmente, sem anular a autoria humana e seus estilos distintos. A Bíblia é, simultaneamente, 100% Palavra de Deus e 100% palavra humana.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="bg-white p-8 rounded-lg shadow-md">
+                        <h3 class="text-2xl mb-4">🔍 Evidências da Inspiração</h3>
+                        <div class="prose-text">
+                            <p>A reivindicação da Bíblia de ser a Palavra inspirada de Deus não é uma afirmação cega, mas é apoiada por um conjunto robusto de evidências internas e externas.</p>
+                            <div class="key-point-box info-box">
+                                <h4 class="font-bold text-lg mb-2 text-green-800">Evidências-Chave:</h4>
+                                <ul class="list-disc list-inside space-y-2">
+                                    <li><strong>Internas:</strong> O próprio testemunho do AT ("Assim diz o SENHOR"), o testemunho de Cristo e dos Apóstolos que o trataram como Palavra inquebrável, e o testemunho interno do Espírito Santo no coração do crente.</li>
+                                    <li><strong>Externas:</strong> O milagre da profecia cumprida (e.g., profecias messiânicas), a testemunha da arqueologia (e.g., Estela de Tel Dã, Prisma de Senaqueribe, Cilindro de Ciro) e a unidade inexplicável da Bíblia.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Unit 3 -->
+                <section id="unit-3" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">3. Os Estudos Críticos do Antigo Testamento</h2>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <h3 class="text-2xl mb-4">🧐 Alta Crítica vs. Baixa Crítica</h3>
+                        <div class="prose-text">
+                            <p>Para o estudante da Bíblia, é essencial compreender as abordagens críticas, distinguindo entre a Alta Crítica, que frequentemente opera a partir de pressupostos céticos, e a Baixa Crítica, uma ferramenta indispensável para a fé.</p>
+                            <div class="flashcard-container mt-6" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
+                                <div class="flashcard">
+                                    <div class="flashcard-front">
+                                        <span class="flashcard-term">Hipótese Documental (JEDP)</span>
+                                        <span class="text-sm text-slate-500 mt-2">(Clique para ver a definição)</span>
+                                    </div>
+                                    <div class="flashcard-back">
+                                        <p class="flashcard-definition"><strong>[DEFINIÇÃO]</strong> Teoria da Alta Crítica, popularizada por Julius Wellhausen, que propõe que o Pentateuco é uma compilação de quatro fontes distintas (Javista, Eloísta, Deuteronomista, Sacerdotal). A teologia reformada rejeita seus pressupostos naturalistas e conclusões, que minam a autoria mosaica e a unidade do texto.</p>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="flashcard-container mt-6" onclick="this.querySelector('.flashcard').classList.toggle('flipped')">
+                                <div class="flashcard">
+                                    <div class="flashcard-front">
+                                        <span class="flashcard-term">Crítica Textual (Baixa Crítica)</span>
+                                        <span class="text-sm text-slate-500 mt-2">(Clique para ver a definição)</span>
+                                    </div>
+                                    <div class="flashcard-back">
+                                        <p class="flashcard-definition"><strong>[DEFINIÇÃO]</strong> É a ciência que compara os milhares de manuscritos bíblicos para reconstruir o texto original com a maior certeza possível. Longe de minar a fé, ela fortalece a confiança na transmissão fiel das Escrituras, pois demonstra que nenhuma doutrina central é afetada por variantes textuais.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Unit 4 -->
+                <section id="unit-4" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">4. A Formação do Cânon e os Textos do AT</h2>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <h3 class="text-2xl mb-4">📚 O Cânon Hebraico (Tanakh)</h3>
+                        <div class="prose-text">
+                            <p>O Cânon é a coleção de livros reconhecidos como inspirados. A Bíblia Hebraica (Tanakh) tem uma estrutura tripartite que Jesus parece referendar em Lucas 24:44.</p>
+                             <div class="definition-box info-box">
+                                <h4 class="font-bold text-lg mb-2 text-sky-800">Estrutura do Tanakh:</h4>
+                                <ul class="list-disc list-inside space-y-2">
+                                    <li><strong>A Lei (Torah):</strong> Gênesis, Êxodo, Levítico, Números, Deuteronômio.</li>
+                                    <li><strong>Os Profetas (Nevi'im):</strong> Anteriores (Josué, Juízes, Samuel, Reis) e Posteriores (Isaías, Jeremias, Ezequiel, Os Doze).</li>
+                                    <li><strong>Os Escritos (Ketuvim):</strong> Salmos, Jó, Provérbios, Rute, Cantares, Eclesiastes, Lamentações, Ester, Daniel, Esdras-Neemias, Crônicas.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="bg-white p-8 rounded-lg shadow-md">
+                        <h3 class="text-2xl mb-4">📜 As Testemunhas Textuais</h3>
+                        <div class="prose-text">
+                            <p>A confiabilidade do nosso texto do AT é baseada em testemunhas manuscritas antigas:</p>
+                             <div class="key-point-box info-box">
+                                <h4 class="font-bold text-lg mb-2 text-green-800">Principais Manuscritos:</h4>
+                                <ul class="list-disc list-inside space-y-2">
+                                    <li><strong>Texto Massorético (TM):</strong> A forma tradicional do texto hebraico, base para a maioria das traduções modernas.</li>
+                                    <li><strong>Septuaginta (LXX):</strong> A tradução grega do AT (séc. III-II a.C.), a "Bíblia" da igreja primitiva.</li>
+                                    <li><strong>Manuscritos do Mar Morto (Qumran):</strong> Descobertos em 1947, são mil anos mais antigos que os manuscritos do TM, confirmando a incrível fidelidade da transmissão textual.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- PARTE II -->
+                
+                <!-- Unit 5 -->
+                <section id="unit-5" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">5. O Pentateuco 1: Gênesis & Êxodo</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Gênesis 📖</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Tradição mosaica (c. 1446-1406 a.C.).</p>
+                            <p><strong>Contexto:</strong> Da Criação à era dos Patriarcas (c. 2100-1800 a.C.).</p>
+                            <p><strong>Estrutura:</strong> História Primeva (1-11) e História Patriarcal (12-50).</p>
+                            <p><strong>Temas Teológicos:</strong> Soberania de Deus, Pecado e Juízo, Aliança e Promessa (Abraâmica).</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>O Protoevangelho (Gn 3:15), tipos de Cristo (Adão, Melquisedeque, Isaque, José), a linhagem messiânica de Judá (Gn 49:10).</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Êxodo 🌊</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Tradição mosaica (c. 1446 a.C.).</p>
+                            <p><strong>Contexto:</strong> Escravidão no Novo Império do Egito.</p>
+                            <p><strong>Estrutura:</strong> Redenção do Egito (1-18) e Aliança no Sinai (19-40).</p>
+                            <p><strong>Temas Teológicos:</strong> Redenção, Aliança, Lei, Presença de Deus (Tabernáculo).</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>A Páscoa (Cristo, nosso Cordeiro pascal - 1 Co 5:7), Moisés como mediador, o Tabernáculo e o sacerdócio (Hebreus 8-10), o maná e a rocha ferida (João 6; 1 Co 10:4).</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Unit 6 -->
+                <section id="unit-6" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">6. O Pentateuco 2: Levítico, Números & Deuteronômio</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Levítico 🙏</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Tradição mosaica (c. 1445 a.C.).</p>
+                            <p><strong>Contexto:</strong> Manual de culto para o Tabernáculo no Sinai.</p>
+                            <p><strong>Estrutura:</strong> Caminho para Deus (Sacrifício, 1-16) e Caminho com Deus (Santificação, 17-27).</p>
+                            <p><strong>Temas Teológicos:</strong> Santidade, Expiação, Pureza.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>Os sacrifícios como tipos da obra de Cristo. O Dia da Expiação (Yom Kippur) e o Bode Expiatório como uma dramatização do evangelho, cumprida em Cristo (Hebreus 9).</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Números 🐍</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Tradição mosaica (c. 1444-1406 a.C.).</p>
+                            <p><strong>Contexto:</strong> A jornada de 40 anos no deserto.</p>
+                            <p><strong>Estrutura:</strong> A geração antiga que falha (1-25) e a nova geração que se prepara (26-36).</p>
+                            <p><strong>Temas Teológicos:</strong> Fé vs. Incredulidade, Murmuração e Rebelião, a Paciência de Deus.</p>
+                             <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>A Serpente de Bronze (João 3:14-15), a Rocha Ferida (1 Coríntios 10:4), a Profecia de Balaão sobre a "estrela de Jacó" (Nm 24:17).</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Deuteronômio ❤️</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Tradição mosaica (c. 1406 a.C.).</p>
+                            <p><strong>Contexto:</strong> Discursos de despedida de Moisés nas planícies de Moabe.</p>
+                            <p><strong>Estrutura:</strong> Três discursos de Moisés renovando a aliança.</p>
+                            <p><strong>Temas Teológicos:</strong> Aliança, Amor e Obediência, o Shema (Dt 6:4), Memória.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>A promessa do Profeta como Moisés (Dt 18:15-18; Atos 3:22). Cristo resiste à tentação com Deuteronômio (Mt 4). A promessa de um coração circuncidado (Dt 30:6) aponta para a Nova Aliança.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Unit 7 -->
+                <section id="unit-7" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">7. Livros Históricos 1: Josué, Juízes & Rute</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Josué ⚔️</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Tradição de Josué (c. 1400-1375 a.C.).</p>
+                            <p><strong>Contexto:</strong> A conquista de Canaã no final da Idade do Bronze Recente.</p>
+                            <p><strong>Estrutura:</strong> Conquista (1-12), Divisão (13-22), Aliança (23-24).</p>
+                            <p><strong>Temas Teológicos:</strong> Fidelidade de Deus, Guerra Santa (*Herem*), Obediência à Torá.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>Josué (*Yehoshua*) como tipo de Jesus (*Yeshua*), que nos conduz ao verdadeiro descanso (Hebreus 4:8-9). Raabe e a salvação dos gentios.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Juízes 🌀</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Anônimo, provavelmente no início da monarquia (c. 1045-1000 a.C.).</p>
+                            <p><strong>Contexto:</strong> Período de anarquia e apostasia após Josué.</p>
+                            <p><strong>Estrutura:</strong> Prólogo (falha), Ciclos dos Juízes, Epílogo (depravação).</p>
+                            <p><strong>Temas Teológicos:</strong> O Ciclo da Apostasia, a Graça de Deus, a necessidade de um Rei Justo.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>Os juízes como salvadores imperfeitos que apontam para o Salvador perfeito. O livro demonstra a profundidade do pecado humano, criando a necessidade de um Salvador que transforme o coração.</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Rute 🌾</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Anônimo, provavelmente durante o reinado de Davi.</p>
+                            <p><strong>Contexto:</strong> Um oásis de fidelidade no período dos juízes.</p>
+                            <p><strong>Estrutura:</strong> Quatro cenas focadas em Rute e Boaz.</p>
+                            <p><strong>Temas Teológicos:</strong> Providência Soberana, *Hesed* (Amor Leal), Redenção (*Go'el* - Parente-Resgatador).</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>Boaz como tipo de Cristo, o Parente-Resgatador. A inclusão da gentia Rute na linhagem do Rei Davi e, consequentemente, do Messias.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Unit 8 -->
+                <section id="unit-8" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">8. Livros Históricos 2: Monarquia e Divisão</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de 1 & 2 Samuel 👑</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                             <p><strong>Autoria e Data:</strong> Anônimo, compilado no início da monarquia (c. 1100-970 a.C.).</p>
+                            <p><strong>Contexto:</strong> Ameaça filisteia e a transição da teocracia para a monarquia.</p>
+                            <p><strong>Estrutura:</strong> Focada em Samuel, Saul e Davi.</p>
+                            <p><strong>Temas Teológicos:</strong> Soberania de Deus, a Monarquia, a Aliança Davídica (2 Samuel 7).</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>Davi como tipo de Cristo, o rei ungido. A Aliança Davídica (2 Sm 7) é a promessa fundamental do Rei Messias, cumprida em Jesus, o Filho de Davi que reina para sempre (Lucas 1:32-33).</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de 1 & 2 Reis 📉</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Anônimo (tradição: Jeremias), compilado durante o exílio (c. 550 a.C.).</p>
+                            <p><strong>Contexto:</strong> Da glória de Salomão à divisão do reino e aos exílios.</p>
+                            <p><strong>Estrutura:</strong> Salomão (1 Rs 1-11), Reino Dividido (1 Rs 12 - 2 Rs 17), Judá Sobrevivente (2 Rs 18-25).</p>
+                            <p><strong>Temas Teológicos:</strong> Teologia da Retribuição, a Palavra Profética (Elias e Eliseu), o Exílio como Juízo.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>Salomão como tipo do Messias em sua sabedoria e glória. Elias como precursor (Malaquias 4:5). A esperança da restauração da linhagem davídica, mesmo no exílio.</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de 1 & 2 Crônicas 🏛️</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Anônimo (o "Cronista", tradição: Esdras), no período pós-exílico (c. 450-400 a.C.).</p>
+                            <p><strong>Contexto:</strong> Para a comunidade que retornou do exílio, buscando identidade e esperança.</p>
+                            <p><strong>Estrutura:</strong> Genealogias, o reinado de Davi, o reinado de Salomão, os reis de Judá.</p>
+                            <p><strong>Temas Teológicos:</strong> Centralidade de Davi e do Templo, Arrependimento e Restauração.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>O Rei Ideal e o Templo Verdadeiro (Cristo e a Igreja). A graça que responde ao arrependimento (2 Cr 7:14) aponta para a obra de Cristo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Unit 9 -->
+                <section id="unit-9" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">9. Livros Históricos 3: Pós-Exílio</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Esdras 🏗️</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Tradição de Esdras (c. 400 a.C.).</p>
+                            <p><strong>Contexto:</strong> O retorno do exílio sob o Império Persa.</p>
+                            <p><strong>Estrutura:</strong> Retorno sob Zorobabel (1-6) e retorno sob Esdras (7-10).</p>
+                            <p><strong>Temas Teológicos:</strong> Fidelidade de Deus, Centralidade do Templo, Autoridade da Lei.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>A restauração como prenúncio da obra de Cristo. Zorobabel na linhagem messiânica. Esdras como tipo de Cristo (sacerdote e mestre).</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Neemias 🧱</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Baseado nas memórias de Neemias (c. 400 a.C.).</p>
+                            <p><strong>Contexto:</strong> A reconstrução dos muros de Jerusalém (c. 445 a.C.).</p>
+                            <p><strong>Estrutura:</strong> Reconstrução dos muros (1-7) e Reforma da aliança (8-13).</p>
+                            <p><strong>Temas Teológicos:</strong> Liderança e Oração, a Palavra de Deus como fundamento, Restauração física e espiritual.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>Neemias como tipo de Cristo (deixa o privilégio para restaurar o povo). A reconstrução dos muros como tipo da edificação da Igreja (Mt 16:18).</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Ester 🎭</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Anônimo, provavelmente no período persa (c. 460 a.C.).</p>
+                            <p><strong>Contexto:</strong> A vida dos judeus na diáspora, na corte do rei persa Xerxes I.</p>
+                            <p><strong>Estrutura:</strong> Uma narrativa de reversão: ascensão de Ester, ameaça de Hamã, queda de Hamã, triunfo dos judeus.</p>
+                            <p><strong>Temas Teológicos:</strong> Providência soberana de Deus (mesmo sem ser nomeado), Conflito cósmico, Coragem humana.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>Ester como tipo de Cristo (intercessora que arrisca a vida). Hamã como tipo do inimigo derrotado. A salvação providencial aponta para a grande salvação em Cristo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Unit 10 -->
+                <section id="unit-10" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">10. Livros Poéticos 1: Sabedoria e Amor</h2>
+                     <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Jó 🌪️</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Anônimo, com ambientação patriarcal mas escrita possivelmente posterior (séc. VII-IV a.C.).</p>
+                            <p><strong>Contexto:</strong> Uma reflexão sapiencial sobre o sofrimento do justo.</p>
+                            <p><strong>Estrutura:</strong> Prólogo, diálogos poéticos, discursos de Deus, epílogo.</p>
+                            <p><strong>Temas Teológicos:</strong> O Problema do Sofrimento, a Soberania e Sabedoria de Deus, Fé em meio à dor.</p>
+                             <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>Jó como tipo de Cristo (o Justo Sofredor). O anseio por um Mediador (Jó 9:33). A esperança da Ressurreição na declaração "Eu sei que o meu Redentor vive" (Jó 19:25).</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Eclesiastes 💨</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Tradição de Salomão (c. 935 a.C.) ou autor posterior (c. 450-200 a.C.).</p>
+                            <p><strong>Contexto:</strong> A busca filosófica pelo sentido da vida "debaixo do sol".</p>
+                            <p><strong>Estrutura:</strong> Investigação sobre a vaidade, conselhos práticos, conclusão final.</p>
+                            <p><strong>Temas Teológicos:</strong> Vaidade (*Hevel*), a Soberania de Deus, o Temor de Deus e a Alegria nos Dons, o Juízo Final.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>Demonstra a futilidade da vida sem Cristo, criando um vácuo que somente Ele pode preencher. Aponta para Cristo como a verdadeira Sabedoria e Sentido.</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Cantares de Salomão ❤️‍🔥</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Tradição de Salomão (c. 970-931 a.C.).</p>
+                            <p><strong>Contexto:</strong> Poema lírico celebrando o amor conjugal.</p>
+                            <p><strong>Estrutura:</strong> Uma série de poemas de amor entre um noivo e uma noiva.</p>
+                            <p><strong>Temas Teológicos:</strong> A Bondade do Amor Conjugal, a Exclusividade e Permanência do Amor.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico (Alegórico):</h4>
+                                <p>A interpretação cristã tradicional vê o livro como uma alegoria do amor entre Cristo (o Noivo) e a Igreja (a Noiva), retratando a intimidade da comunhão espiritual.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Unit 11 -->
+                <section id="unit-11" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">11. Livros Poéticos 2: Adoração e Vida Prática</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Salmos 🎶</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Vários autores (Davi, Asafe, etc.), compilados ao longo da história de Israel.</p>
+                            <p><strong>Contexto:</strong> O hinário do templo de Israel.</p>
+                            <p><strong>Estrutura:</strong> Cinco "livros" que espelham a Torá, traçando uma jornada do lamento ao louvor.</p>
+                            <p><strong>Temas Teológicos:</strong> Adoração e Louvor, Lamento e Confiança, a Lei de Deus (*Torah*), Realeza de YHWH e do Messias.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>O livro mais citado no NT. Profecias diretas (Salmos 2, 110), o sofrimento do Messias (Salmo 22), a voz de Cristo nos lamentos, a Ressurreição (Salmo 16).</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Provérbios 🧠</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Compilação, com a maior parte atribuída a Salomão (séc. X a.C.).</p>
+                            <p><strong>Contexto:</strong> Manual de sabedoria prática para a vida cotidiana.</p>
+                            <p><strong>Estrutura:</strong> Discursos sobre a Sabedoria (1-9), coleções de provérbios curtos.</p>
+                            <p><strong>Temas Teológicos:</strong> "O temor do SENHOR é o princípio do saber", Sabedoria vs. Insensatez, Justiça e Retidão.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>Cristo como a Sabedoria de Deus personificada (Provérbios 8; 1 Co 1:24). A vida sábia é a vida em Cristo, em quem "todos os tesouros da sabedoria" estão ocultos (Cl 2:3).</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Unit 12 -->
+                <section id="unit-12" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">12. Livros Proféticos 1: Isaías & Jeremias</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Isaías 🔥</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Isaías, filho de Amoz, profetizou em Judá (c. 740-680 a.C.).</p>
+                            <p><strong>Contexto:</strong> Ameaça do Império Assírio.</p>
+                            <p><strong>Estrutura:</strong> Livro do Juízo (1-39) e Livro do Consolo (40-66).</p>
+                            <p><strong>Temas Teológicos:</strong> Santidade de Deus, Juízo e Salvação, o Servo Sofredor, a Glória Futura.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>O "Evangelho do Antigo Testamento". Profecias do nascimento virginal (7:14), do Rei divino (9:6-7), e especialmente os Cânticos do Servo Sofredor (caps. 42, 49, 50, 52-53), que descrevem a morte vicária e a exaltação de Cristo.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Jeremias (e Lamentações) 💧</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Jeremias, com a ajuda de seu escriba Baruque (c. 627-580 a.C.).</p>
+                            <p><strong>Contexto:</strong> Os últimos dias de Judá e a ascensão da Babilônia.</p>
+                            <p><strong>Estrutura:</strong> Chamado do profeta, oráculos, narrativas biográficas, apêndice.</p>
+                            <p><strong>Temas Teológicos:</strong> Juízo Pactual, Arrependimento, a Nova Aliança.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>A profecia da Nova Aliança (Jeremias 31:31-34) é fundamental para a teologia do NT. Jeremias, em seu sofrimento, prefigura o sofrimento de Cristo. Lamentações é um lamento sobre a Jerusalém caída que encontra sua antítipo no lamento de Cristo sobre a cidade.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Unit 13 -->
+                <section id="unit-13" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">13. Livros Proféticos 2: Ezequiel & Daniel</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Ezequiel 👁️</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Ezequiel, sacerdote e profeta, ministrou aos exilados na Babilônia (c. 593-571 a.C.).</p>
+                            <p><strong>Contexto:</strong> O exílio babilônico.</p>
+                            <p><strong>Estrutura:</strong> Juízo sobre Judá (1-24), Juízo sobre as nações (25-32), Esperança e restauração (33-48).</p>
+                            <p><strong>Temas Teológicos:</strong> A Glória do SENHOR, a Responsabilidade Individual, a Restauração de Israel.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>A promessa de um "novo coração" (Ez 36:26) é cumprida na regeneração operada por Cristo. A visão do "bom pastor" (Ez 34) aponta para Jesus. A visão do novo templo encontra seu cumprimento último em Cristo e na nova criação.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="collapsible-header flex items-center text-xl font-bold p-4 rounded-md cursor-pointer hover:bg-slate-100">Análise de Daniel 🦁</div>
+                        <div class="collapsible-content pl-6 pt-4 prose-text">
+                            <p><strong>Autoria e Data:</strong> Daniel, estadista judeu nas cortes da Babilônia e da Pérsia (séc. VI a.C.).</p>
+                            <p><strong>Contexto:</strong> A vida fiel no exílio e a soberania de Deus sobre os impérios mundiais.</p>
+                            <p><strong>Estrutura:</strong> Narrativas na corte (1-6) e Visões apocalípticas (7-12).</p>
+                            <p><strong>Temas Teológicos:</strong> Soberania de Deus sobre a história, o Reino de Deus, Fidelidade.</p>
+                            <div class="christology-box info-box">
+                                <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-cross mr-2"></i>Foco Cristológico:</h4>
+                                <p>A visão do "Filho do Homem" que recebe um reino eterno (Daniel 7:13-14) é o título messiânico favorito de Jesus. A profecia das setenta semanas (Daniel 9) aponta para o tempo da vinda do Messias. A "pedra" que destrói os reinos (Daniel 2) é o Reino de Cristo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Unit 14 -->
+                <section id="unit-14" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">14. Os Doze Profetas Menores</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-bold mb-2">Oseias</h3><p class="prose-text">O casamento de Oseias com a prostituta Gômer serve como uma metáfora do amor infalível de Deus por Israel, a noiva adúltera. Aponta para Cristo, o Noivo fiel que redime Sua noiva infiel, a Igreja.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-bold mb-2">Joel</h3><p class="prose-text">Uma praga de gafanhotos prefigura o "Dia do SENHOR". A promessa do derramamento do Espírito "sobre toda a carne" (Joel 2:28-32) é citada por Pedro em Pentecostes como cumprida através da obra de Cristo (Atos 2).</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-bold mb-2">Amós</h3><p class="prose-text">Um profeta da justiça social. A promessa de restaurar o "tabernáculo caído de Davi" (Amós 9:11) é citada em Atos 15 como sendo cumprida na inclusão dos gentios na Igreja de Cristo.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-bold mb-2">Obadias</h3><p class="prose-text">Anuncia o juízo sobre Edom por seu orgulho. Aponta para a vitória final de Cristo e Seu Reino sobre todos os inimigos do povo de Deus.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-bold mb-2">Jonas</h3><p class="prose-text">Jesus usa os "três dias e três noites" de Jonas no ventre do grande peixe como o único "sinal" de Sua própria morte e ressurreição (Mateus 12:39-41).</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-bold mb-2">Miqueias</h3><p class="prose-text">Profetiza que o Messias nasceria em Belém (Miqueias 5:2), uma profecia cumprida em Jesus.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-bold mb-2">Naum</h3><p class="prose-text">Anuncia a queda de Nínive. Mostra que Deus é um refúgio para Seu povo e um vingador contra Seus inimigos, um tema consumado na vitória de Cristo.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-bold mb-2">Habacuque</h3><p class="prose-text">A grande declaração "o justo viverá pela sua fé" (Habacuque 2:4) se torna um texto fundamental para Paulo explicar a justificação pela fé em Cristo.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-bold mb-2">Sofonias</h3><p class="prose-text">Adverte sobre o "Dia do SENHOR", mas termina com uma bela imagem de Deus se regozijando sobre Seu povo redimido, uma imagem da alegria que Cristo tem em Sua noiva, a Igreja.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-bold mb-2">Ageu</h3><p class="prose-text">Profetiza que a glória do segundo Templo será maior que a do primeiro, uma profecia cumprida quando Cristo, a glória de Deus encarnada, andou em seus pátios.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-bold mb-2">Zacarias</h3><p class="prose-text">Rico em profecias messiânicas: o "Renovo", o Rei humilde em um jumento (9:9), o Pastor ferido (13:7), e o Messias transpassado (12:10).</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-bold mb-2">Malaquias</h3><p class="prose-text">Profetiza a vinda do "mensageiro da aliança" e de "Elias", o precursor, apontando diretamente para João Batista e a vinda de Cristo.</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Unit 15 -->
+                <section id="unit-15" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">15. Conclusão Geral: A Unidade em Cristo</h2>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <h3 class="text-2xl mb-4">🏁 A Unidade e a Relevância do Antigo Testamento</h3>
+                        <div class="prose-text">
+                            <p>Ao final desta jornada, emerge uma verdade inegável: o Antigo Testamento não é uma coleção desconexa de histórias, leis e poemas. É uma narrativa unificada, uma grande saga da redenção que se move com propósito inexorável em direção a um clímax. Da promessa em Gênesis 3:15, passando pelas alianças e pelos anseios dos profetas, cada livro é um fio na tapeçaria que Deus está tecendo. Essa tapeçaria revela a imagem de Seu Filho, Jesus Cristo.</p>
+                            <p>Sua relevância para a Igreja hoje é, portanto, imensurável. Ele é o fundamento da nossa fé, a história da nossa família espiritual e a revelação do caráter do nosso Deus. Ele nos ensina a adorar, a lamentar, a viver sabiamente e a esperar com confiança no Rei soberano que cumpriu todas as promessas e que um dia voltará para consumar Seu Reino eterno.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Unit 16 -->
+                <section id="unit-16" class="content-section space-y-8">
+                    <h2 class="text-4xl font-bold pb-4">16. Bibliografia Comentada</h2>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <div class="prose-text space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold">Archer, Gleason L. Jr. <em>Merece Confiança o Antigo Testamento?</em></h4>
+                                <p>Uma defesa clássica e abrangente da historicidade e da inspiração do Antigo Testamento. Excelente para fortalecer a confiança na confiabilidade das Escrituras. <a href="https://www.vidanova.com.br/produtos/merece-confianca-o-antigo-testamento" target="_blank" class="text-cyan-600 hover:underline">Verificar fonte</a></p>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold">Walton, John H., e Andrew E. Hill. <em>Panorama do Antigo Testamento.</em></h4>
+                                <p>Uma introdução acadêmica, mas acessível, que se destaca por situar cada livro do AT em seu contexto cultural e histórico do Antigo Oriente Próximo. <a href="https://www.vidanova.com.br/produtos/panorama-do-antigo-testamento" target="_blank" class="text-cyan-600 hover:underline">Verificar fonte</a></p>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold">Dillard, Raymond B., e Tremper Longman III. <em>Introdução ao Antigo Testamento.</em></h4>
+                                <p>Uma das introduções evangélicas mais completas e respeitadas. Oferece uma análise detalhada de cada livro, cobrindo questões de autoria, data, estrutura, teologia e debates críticos. <a href="https://www.vidacrista.com.br/produtos/introducao-ao-antigo-testamento" target="_blank" class="text-cyan-600 hover:underline">Verificar fonte</a></p>
+                            </div>
+                             <div>
+                                <h4 class="text-lg font-semibold">Goldsworthy, Graeme. <em>O Ouro de Cristo: O Evangelho no Antigo Testamento.</em></h4>
+                                <p>Uma introdução brilhante à teologia bíblica, mostrando como o Antigo Testamento aponta para Cristo de forma consistente. Excelente para aprender a ler o AT com uma lente cristológica. <a href="https://www.editorafiel.com.br/teologia-biblica/678-o-ouro-de-cristo.html" target="_blank" class="text-cyan-600 hover:underline">Verificar fonte</a></p>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold">Kitchen, K. A. <em>On the Reliability of the Old Testament.</em></h4>
+                                <p>(Em inglês) Uma obra monumental de um egiptólogo de renome mundial, que demonstra a notável precisão histórica do Antigo Testamento. <a href="https://www.eerdmans.com/9780802803962/on-the-reliability-of-the-old-testament/" target="_blank" class="text-cyan-600 hover:underline">Verificar fonte</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <footer class="text-center mt-12 py-6 border-t border-slate-200">
+                <p class="text-sm text-slate-500">Desenvolvido por Rodrigo Niskier e Gemini.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('.sidebar-link');
+            const sections = document.querySelectorAll('.content-section');
+            const collapsibles = document.querySelectorAll('.collapsible-header');
+
+            function showSection(hash) {
+                if (!hash || hash === '#') {
+                    hash = '#unit-1';
+                }
+
+                sections.forEach(section => {
+                    section.style.display = ('#' + section.id === hash) ? 'block' : 'none';
+                });
+
+                links.forEach(link => {
+                    if (link.getAttribute('href') === hash) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+                
+                window.scrollTo(0, 0);
+            }
+
+            links.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    history.pushState(null, null, targetId);
+                    showSection(targetId);
+                });
+            });
+            
+            window.addEventListener('popstate', () => {
+                showSection(window.location.hash);
+            });
+
+            collapsibles.forEach(header => {
+                header.addEventListener('click', function () {
+                    this.classList.toggle('open');
+                    const content = this.nextElementSibling;
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                    }
+                });
+            });
+
+            showSection(window.location.hash);
+        });
+    </script>
+</body>
+</html>
