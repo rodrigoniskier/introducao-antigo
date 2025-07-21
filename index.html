@@ -763,84 +763,109 @@
         </main>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const links = document.querySelectorAll('.sidebar-link');
-            const sections = document.querySelectorAll('.content-section');
-            const collapsibles = document.querySelectorAll('.collapsible-header');
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const links = document.querySelectorAll('.sidebar-link');
+        const sections = document.querySelectorAll('.content-section');
+        const collapsibles = document.querySelectorAll('.collapsible-header');
 
-            function setFlashcardHeights(sectionElement) {
-                sectionElement.querySelectorAll('.flashcard-container').forEach(container => {
-                    if (container.style.height && container.style.height !== '0px') return;
+        /**
+         * FUNÇÃO ATUALIZADA
+         * Calcula e define a altura dos flashcards dentro de uma seção específica.
+         * A altura é baseada no maior conteúdo (frente ou verso).
+         */
+        function setFlashcardHeights(sectionElement) {
+            sectionElement.querySelectorAll('.flashcard-container').forEach(container => {
+                const front = container.querySelector('.flashcard-front');
+                const back = container.querySelector('.flashcard-back');
 
-                    const front = container.querySelector('.flashcard-front');
-                    const back = container.querySelector('.flashcard-back');
-                    const frontHeight = front.scrollHeight;
-                    const backHeight = back.scrollHeight;
-                    const maxHeight = Math.max(frontHeight, backHeight);
-                    container.style.height = `${maxHeight}px`;
-                });
-            }
-
-            function showSection(hash) {
-                if (!hash || hash === '#') {
-                    hash = '#unit-1';
-                }
-
-                sections.forEach(section => {
-                    if ('#' + section.id === hash) {
-                        section.style.display = 'block';
-                        setFlashcardHeights(section); 
-                    } else {
-                        section.style.display = 'none';
-                    }
-                });
-
-                links.forEach(link => {
-                    if (link.getAttribute('href') === hash) {
-                        link.classList.add('active');
-                    } else {
-                        link.classList.remove('active');
-                    }
-                });
+                // Reseta a altura para 'auto' para que a medição do scrollHeight seja precisa
+                container.style.height = 'auto';
                 
-                window.scrollTo(0, 0);
+                const frontHeight = front.scrollHeight;
+                const backHeight = back.scrollHeight;
+
+                // Define a altura do container como a altura do maior lado (frente ou verso)
+                const maxHeight = Math.max(frontHeight, backHeight);
+                container.style.height = `${maxHeight}px`;
+            });
+        }
+        
+        /**
+         * NOVA FUNÇÃO
+         * Identifica a seção atualmente visível e aciona o recálculo das alturas dos flashcards.
+         */
+        function handleResize() {
+            const activeSection = document.querySelector('.content-section[style*="display: block"]');
+            if (activeSection) {
+                setFlashcardHeights(activeSection);
             }
+        }
+
+        function showSection(hash) {
+            if (!hash || hash === '#') {
+                hash = '#unit-1';
+            }
+
+            sections.forEach(section => {
+                if ('#' + section.id === hash) {
+                    section.style.display = 'block';
+                    // Chama a função de cálculo de altura sempre que uma seção é exibida
+                    setFlashcardHeights(section); 
+                } else {
+                    section.style.display = 'none';
+                }
+            });
 
             links.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    history.pushState(null, null, targetId);
-                    showSection(targetId);
-                });
+                if (link.getAttribute('href') === hash) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
             });
             
-            window.addEventListener('popstate', () => {
-                showSection(window.location.hash);
-            });
+            window.scrollTo(0, 0);
+        }
 
-            collapsibles.forEach(header => {
-                header.addEventListener('click', function () {
-                    this.classList.toggle('open');
-                    const content = this.nextElementSibling;
-                    if (content.style.maxHeight) {
-                        content.style.maxHeight = null;
-                    } else {
-                        content.style.maxHeight = content.scrollHeight + "px";
-                    }
-                });
+        links.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                history.pushState(null, null, targetId);
+                showSection(targetId);
             });
-
-            // Add click listener for flashcards
-            document.querySelectorAll('.flashcard-container').forEach(container => {
-                container.addEventListener('click', function() {
-                    this.querySelector('.flashcard').classList.toggle('flipped');
-                });
-            });
-
+        });
+        
+        window.addEventListener('popstate', () => {
             showSection(window.location.hash);
         });
-    </script>
+
+        collapsibles.forEach(header => {
+            header.addEventListener('click', function () {
+                this.classList.toggle('open');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+
+        // O listener de clique dos flashcards foi movido para cá na correção anterior
+        document.querySelectorAll('.flashcard-container').forEach(container => {
+            container.addEventListener('click', function() {
+                this.querySelector('.flashcard').classList.toggle('flipped');
+            });
+        });
+        
+        // ADICIONADO: Escutador de evento para redimensionamento da janela
+        window.addEventListener('resize', handleResize);
+
+        // Chamada inicial para a seção visível
+        showSection(window.location.hash);
+    });
+</script>
 </body>
 </html>
